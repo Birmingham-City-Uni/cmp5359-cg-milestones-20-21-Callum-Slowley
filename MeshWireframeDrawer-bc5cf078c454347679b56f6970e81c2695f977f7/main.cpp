@@ -109,18 +109,36 @@ int main(int argc, char** argv) {
 	else {
 		model = new Model("obj/cc.obj");
 	}
-	//used to get random colors.
+
+	////used to get random colors.
+	//for (int i = 0; i < model->nfaces(); i++) {
+	//	std::vector<int> face = model->face(i);
+	//	Vec2i screen_coords[3];
+	//	for (int j = 0; j < 3; j++) {
+	//		Vec3f world_coords = model->vert(face[j]);
+	//		screen_coords[j] = Vec2i((world_coords.x + 1) * width / 2, (world_coords.y + 1.0f) * height / 2.0f);
+	//	}
+	//	triangle(screen_coords[0], screen_coords[1], screen_coords[2], image, TGAColor(rand() % 255, rand() % 255, rand() % 255, 255));
+	//}
+
+	//shaded
+	Vec3f light_dir(0, 0, -1);
 	for (int i = 0; i < model->nfaces(); i++) {
 		std::vector<int> face = model->face(i);
 		Vec2i screen_coords[3];
+		Vec3f wordl_cords[3];
 		for (int j = 0; j < 3; j++) {
-			Vec3f world_coords = model->vert(face[j]);
-			screen_coords[j] = Vec2i((world_coords.x + 1) * width / 2, (world_coords.y + 1.0f) * height / 2.0f);
+			Vec3f v = model->vert(face[j]);
+			screen_coords[j]= Vec2i((v.x + 1) * width / 2, (v.y + 1.0f) * height / 2.0f);
+			wordl_cords[j] = v;
 		}
-		triangle(screen_coords[0], screen_coords[1], screen_coords[2], image, TGAColor(rand() % 255, rand() % 255, rand() % 255, 255));
+		Vec3f n = (wordl_cords[2] - wordl_cords[0])^(wordl_cords[1] - wordl_cords[0]);
+		n.normalize();
+		float intensity = n * light_dir;
+		if (intensity > 0) {
+			triangle(screen_coords[0], screen_coords[1], screen_coords[2], image, TGAColor(intensity * 255, intensity * 255, intensity * 255, 255));
+		}
 	}
-	//shaded
-	
 
 	image.flip_vertically(); // Origin at the left bottom corner of the image
 	image.write_tga_file("output.tga");
