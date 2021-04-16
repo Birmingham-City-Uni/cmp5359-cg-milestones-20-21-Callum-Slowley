@@ -1,0 +1,2 @@
+D:\Uni\year2\Sem2\Graphics\Week 9\Spheretracing\Debug\Spheretracing.exe
+D:\Uni\year2\Sem2\Graphics\Week 9\Spheretracing\Debug\Spheretracing.pdb
