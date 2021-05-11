@@ -119,11 +119,13 @@ double hit_sphere(const Point3f& centre, double radius, const Ray& r) {
     }
 }
 
-Colour ray_colour(const Ray& r, const hittable& world) {
+Colour ray_colour(const Ray& r, const hittable& world, int depth) {
     hit_record rec;
+    //if we have hit the depth limit no more light has been gathered
+    if (depth <= 0) { return Colour(0, 0, 0); }
     if (world.hit(r, 0, infinity, rec)) {
         Point3f target = rec.p + rec.normal + Vec3f().random_in_unit_sphere();
-        return 0.5 * ray_colour(Ray(rec.p, target - rec.p), world);
+        return 0.5 * ray_colour(Ray(rec.p, target - rec.p), world, depth);
     }
     Vec3f unit_direction = r.direction().normalize();
     auto t = 0.5 * (unit_direction.y + 1);
@@ -139,6 +141,8 @@ int main(int argc, char **argv)
     const auto aspect_ratio = 16.0 / 9.0;
     const int image_width = screen->w;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
+    const int max_depth = 50;
+
     //samples for testing
     const int spp = 4;
     const float scale = 1.0f / spp;
@@ -220,7 +224,7 @@ int main(int argc, char **argv)
                     auto v = double(y + random_double()) / (image_height - 1);
                     Ray ray = cam.get_ray(u, v);
                     //colours for every sample
-                    pix_col = pix_col + ray_colour(ray, world);
+                    pix_col = pix_col + ray_colour(ray, world,max_depth);
                 }
                 Uint32 colour = SDL_MapRGB(screen->format, pix_col.x * scale, pix_col.y * scale, pix_col.z * scale);
                 putpixel(screen, x, y, colour);
