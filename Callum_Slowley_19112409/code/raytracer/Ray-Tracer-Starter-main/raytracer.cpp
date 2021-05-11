@@ -6,6 +6,7 @@
 #include "sphere.h"
 #include "common.h"
 #include "Camera.h"
+#include "hittable.h"
 #include "hittable_list.h"
 #include <fstream>
 #include <chrono>
@@ -105,25 +106,25 @@ void clamp255(Vec3f& col) {
     col.z = (col.z > 255) ? 255 : (col.z < 0) ? 0 : col.z;
 }
 
-double hit_sphere(const Point3f& centre, double radius, const Ray& r) {
-    Vec3f oc = r.origin() - centre;
-    auto a = r.direction().dotProduct(r.direction());
-    auto b = 2.0 * oc.dotProduct(r.direction());
-    auto c = oc.dotProduct(oc) - radius * radius;
-    auto discriminant = b * b - 4 * a * c;
-    if (discriminant < 0) {
-        return -1.0;
-    }
-    else {
-        return (-b - sqrt(discriminant)) / (2.0 * a);
-    }
-}
+//double hit_sphere(const Point3f& centre, double radius, const Ray& r) {
+//    Vec3f oc = r.origin() - centre;
+//    auto a = r.direction().dotProduct(r.direction());
+//    auto b = 2.0 * oc.dotProduct(r.direction());
+//    auto c = oc.dotProduct(oc) - radius * radius;
+//    auto discriminant = b * b - 4 * a * c;
+//    if (discriminant < 0) {
+//        return -1.0;
+//    }
+//    else {
+//        return (-b - sqrt(discriminant)) / (2.0 * a);
+//    }
+//}
 
 Colour ray_colour(const Ray& r, const hittable& world, int depth) {
     hit_record rec;
     //if we have hit the depth limit no more light has been gathered
-    if (depth <= 0) { return Colour(0, 0, 0); }
-    if (world.hit(r, 0, infinity, rec)) {
+    if (depth <= 0)  return Colour(0, 0, 0); 
+    if (world.hit(r,  0.001, infinity, rec)) {
         Point3f target = rec.p + rec.normal + Vec3f().random_in_unit_sphere();
         return 0.5 * ray_colour(Ray(rec.p, target - rec.p), world, depth);
     }
@@ -167,8 +168,8 @@ int main(int argc, char **argv)
     const Colour black(0, 0, 0);
     const Colour red(255, 0, 0);
 
-    const sphere Testsphere(Vec3f(screen->w * 0.5, screen->h * 0.5, 50), 50);
-    const sphere light(Vec3f(0, 0, 50), 1);
+    //const sphere Testsphere(Vec3f(screen->w * 0.5, screen->h * 0.5, 50), 50);
+    //const sphere light(Vec3f(0, 0, 50), 1);
 
  
     double t;

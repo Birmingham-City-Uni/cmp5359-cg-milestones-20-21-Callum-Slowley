@@ -44,14 +44,6 @@ typedef Vec2<int> Vec2i;
 
 
 
-inline double rand_double() {
-    //returning a random real number
-    return rand() / (RAND_MAX + 1.0);
-}
-inline double rand_double(double min, double max) {
-    //return a readom real in min max instead of 1,0
-    return min + (max - min) * rand_double();
-}
 
 // Implementation of a generic vector class - it will be used to deal with 3D points, vectors and normals.
 // The class is implemented as a template. While it may complicate the code a bit, it gives us
@@ -60,6 +52,14 @@ inline double rand_double(double min, double max) {
 //
 // Vec3 is a standard/common way of naming vectors, points, etc. The OpenEXR and Autodesk libraries
 // use this convention for instance.
+inline double rand_double() {
+    //returning a random real number
+    return rand() / (RAND_MAX + 1.0);
+}
+inline double rand_double(double min, double max) {
+    //return a readom real in min max instead of 1,0
+    return min + (max - min) * rand_double();
+}
 
 template<typename T>
 class Vec3
