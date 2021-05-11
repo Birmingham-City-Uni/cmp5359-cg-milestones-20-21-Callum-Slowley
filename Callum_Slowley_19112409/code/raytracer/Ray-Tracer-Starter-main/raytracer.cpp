@@ -126,7 +126,7 @@ Colour ray_colour(const Ray& r, const hittable& world, int depth) {
     if (depth <= 0)  return Colour(0, 0, 0); 
     if (world.hit(r,  0.001, infinity, rec)) {
         Point3f target = rec.p + rec.normal + Vec3f().random_in_unit_sphere();
-        return 0.5 * ray_colour(Ray(rec.p, target - rec.p), world, depth);
+        return 0.5 * ray_colour(Ray(rec.p, target - rec.p), world, depth-1);
     }
     Vec3f unit_direction = r.direction().normalize();
     auto t = 0.5 * (unit_direction.y + 1);

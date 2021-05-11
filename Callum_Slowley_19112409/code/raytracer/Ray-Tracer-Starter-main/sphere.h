@@ -1,6 +1,5 @@
 #pragma once
 
-#pragma once
 
 #include "hittable.h"
 #include "geometry.h"

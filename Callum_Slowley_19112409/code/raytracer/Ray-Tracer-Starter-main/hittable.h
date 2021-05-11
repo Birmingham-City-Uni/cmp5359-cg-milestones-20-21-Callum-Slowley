@@ -1,6 +1,7 @@
 #pragma once
 #include "Ray.h"
-
+#include "geometry.h"
+#include "common.h"
 
 
 struct hit_record {
