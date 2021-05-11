@@ -226,7 +226,13 @@ int main(int argc, char **argv)
                     //colours for every sample
                     pix_col = pix_col + ray_colour(ray, world,max_depth);
                 }
-                Uint32 colour = SDL_MapRGB(screen->format, pix_col.x * scale, pix_col.y * scale, pix_col.z * scale);
+                //scale spp and gamma correct
+                pix_col /= 255.f * spp;
+                pix_col.x = sqrt(pix_col.x);
+                pix_col.y = sqrt(pix_col.y);
+                pix_col.z = sqrt(pix_col.z);
+                pix_col *= 255;
+                Uint32 colour = SDL_MapRGB(screen->format, pix_col.x , pix_col.y , pix_col.z );
                 putpixel(screen, x, y, colour);
             }
         }
