@@ -160,6 +160,7 @@
     <ClInclude Include="Multithreading.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="sphere.h" />
+    <ClInclude Include="triangles.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="raytracer.cpp" />
