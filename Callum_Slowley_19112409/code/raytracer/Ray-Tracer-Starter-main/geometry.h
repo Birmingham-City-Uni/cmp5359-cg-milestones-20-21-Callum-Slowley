@@ -137,6 +137,12 @@ public:
             return p;
         }
     }
+
+    bool near_zero() const {
+        //return true if close to zero
+        const auto s = 1e-8;
+        return (x < s) && (y < s) && (z < s);
+    }
 };
 
 // Now you can specialize the class. We are just showing two examples here. In your code

@@ -3,6 +3,7 @@
 #include "geometry.h"
 #include "common.h"
 
+class material; //forward delaration of material class
 
 struct hit_record {
 	Point3f p;
@@ -10,6 +11,7 @@ struct hit_record {
 	double t;
 	bool front_face;
 
+	shared_ptr<material>mat_ptr;
 
 
 	inline void set_face_normal(const Ray& r, const Vec3f& outward_normal) {

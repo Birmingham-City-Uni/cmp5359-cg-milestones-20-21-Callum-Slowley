@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "hittable.h"
 #include "hittable_list.h"
+#include "material.h"
 #include <fstream>
 #include <chrono>
 
@@ -125,8 +126,11 @@ Colour ray_colour(const Ray& r, const hittable& world, int depth) {
     //if we have hit the depth limit no more light has been gathered
     if (depth <= 0)  return Colour(0, 0, 0); 
     if (world.hit(r,  0.001, infinity, rec)) {
-        Point3f target = rec.p + rec.normal + Vec3f().random_in_unit_sphere();
-        return 0.5 * ray_colour(Ray(rec.p, target - rec.p), world, depth-1);
+        Ray scattered;
+        Colour attenuation;
+        if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+            return attenuation * ray_colour(scattered, world, depth - 1);
+        return Colour(0, 0, 0);
     }
     Vec3f unit_direction = r.direction().normalize();
     auto t = 0.5 * (unit_direction.y + 1);
@@ -157,12 +161,19 @@ int main(int argc, char **argv)
     //auto horizontal = Vec3f(viewport_width, 0, 0);
     //auto vertical = Vec3f(0, viewport_height, 0);
     //auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vec3f(0, 0, focal_length);
-    camera cam;
+    camera cam(90.0,aspect_ratio);
 
     //world
+    auto R = cos(pi / 4);
     hittable_list world;
-    world.add(make_shared<sphere>(Point3f(0, 0, -1), 0.5));
-    world.add(make_shared<sphere>(Point3f(0, -100.5, -1), 100));
+
+    //materials 
+    auto material_left = make_shared <lambertian>(Colour(0,0,1));
+    auto material_right = make_shared <lambertian>(Colour(1, 0, 0));
+
+    //objects
+    world.add(make_shared<sphere>(Point3f(-R, 0.0, -1.0), R, material_left));
+    world.add(make_shared<sphere>(Point3f(R, 0.0, -1.0), R, material_right));
 
     const Colour white(255, 255, 255);
     const Colour black(0, 0, 0);
