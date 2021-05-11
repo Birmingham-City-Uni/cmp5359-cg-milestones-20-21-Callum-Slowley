@@ -1,0 +1,54 @@
+﻿'RayTracer.exe' (Win32): Loaded 'E:\Uni\year2\Sem2\Graphics\Week 10\Ray-Tracer-Starter-main\x64\Debug\RayTracer.exe'. Symbols loaded.
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\ntdll.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\kernel32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Program Files (x86)\AVG\Antivirus\aswhook.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\KernelBase.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\shell32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\msvcp_win.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\ucrtbase.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\user32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\win32u.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\gdi32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\gdi32full.dll'. 
+'RayTracer.exe' (Win32): Loaded 'E:\Uni\year2\Sem2\Graphics\Week 10\Ray-Tracer-Starter-main\x64\Debug\SDL2.dll'. Module was built without symbols.
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\advapi32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\msvcrt.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\sechost.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\rpcrt4.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\imm32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\ole32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\combase.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\oleaut32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\setupapi.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\cfgmgr32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\bcrypt.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\msvcp140d.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\vcruntime140d.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\vcruntime140_1d.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\ucrtbased.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\version.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\winmm.dll'. 
+The thread 0x414c has exited with code 0 (0x0).
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\SHCore.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\uxtheme.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\msctf.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\kernel.appcore.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\bcryptprimitives.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\clbcatq.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\TextInputFramework.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\CoreUIComponents.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\CoreMessaging.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\ws2_32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\ntmarta.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\WinTypes.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Program Files (x86)\Overwolf\0.168.0.12\OWExplorer.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\crypt32.dll'. 
+'RayTracer.exe' (Win32): Loaded 'C:\Windows\System32\shlwapi.dll'. 
+The thread 0x48a8 has exited with code 0 (0x0).
+The thread 0x31dc has exited with code 0 (0x0).
+The thread 0x4c38 has exited with code 0 (0x0).
+The thread 0x1ca0 has exited with code -1073741510 (0xc000013a).
+The thread 0x37ac has exited with code -1073741510 (0xc000013a).
+The thread 0x3c64 has exited with code -1073741510 (0xc000013a).
+The thread 0x4b10 has exited with code -1073741749 (0xc000004b).
+The program '[15284] RayTracer.exe' has exited with code -1073741510 (0xc000013a).
