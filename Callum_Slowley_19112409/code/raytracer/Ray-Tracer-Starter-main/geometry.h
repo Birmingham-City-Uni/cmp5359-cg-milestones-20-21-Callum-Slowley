@@ -42,6 +42,17 @@ public:
 typedef Vec2<float> Vec2f;
 typedef Vec2<int> Vec2i;
 
+
+
+inline double rand_double() {
+    //returning a random real number
+    return rand() / (RAND_MAX + 1.0);
+}
+inline double rand_double(double min, double max) {
+    //return a readom real in min max instead of 1,0
+    return min + (max - min) * rand_double();
+}
+
 // Implementation of a generic vector class - it will be used to deal with 3D points, vectors and normals.
 // The class is implemented as a template. While it may complicate the code a bit, it gives us
 // the flexibility later, to specialize the type of the coordinates into anything we want.
@@ -112,6 +123,20 @@ public:
     }
     
     T x, y, z;
+    //section used for defuse 
+    inline static Vec3 random() {
+        return Vec3(rand_double(), rand_double(), rand_double());
+    }
+    inline static Vec3 random(double min, double max) {
+        return Vec3(rand_double(min, max), rand_double(min, max), rand_double(min, max));
+    }
+    Vec3 random_in_unit_sphere() {
+        while (true) {
+            auto p = Vec3::random(-1, 1);
+            if (p.norm() >= 1) continue;
+            return p;
+        }
+    }
 };
 
 // Now you can specialize the class. We are just showing two examples here. In your code

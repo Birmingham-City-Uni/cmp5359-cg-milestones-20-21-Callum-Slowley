@@ -122,7 +122,8 @@ double hit_sphere(const Point3f& centre, double radius, const Ray& r) {
 Colour ray_colour(const Ray& r, const hittable& world) {
     hit_record rec;
     if (world.hit(r, 0, infinity, rec)) {
-        return (rec.normal + Colour(1.0, 1.0, 1.0)) * 255 * 0.5;
+        Point3f target = rec.p + rec.normal + Vec3f().random_in_unit_sphere();
+        return 0.5 * ray_colour(Ray(rec.p, target - rec.p), world);
     }
     Vec3f unit_direction = r.direction().normalize();
     auto t = 0.5 * (unit_direction.y + 1);
