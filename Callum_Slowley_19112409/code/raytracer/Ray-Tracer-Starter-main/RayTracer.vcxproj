@@ -157,6 +157,7 @@
     <ClInclude Include="hittable.h" />
     <ClInclude Include="hittable_list.h" />
     <ClInclude Include="material.h" />
+    <ClInclude Include="Multithreading.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="sphere.h" />
   </ItemGroup>

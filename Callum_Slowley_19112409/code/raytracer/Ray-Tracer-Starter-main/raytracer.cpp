@@ -9,6 +9,7 @@
 #include "hittable.h"
 #include "hittable_list.h"
 #include "material.h"
+#include "Multithreading.h"
 #include <fstream>
 #include <chrono>
 
@@ -136,6 +137,32 @@ Colour ray_colour(const Ray& r, const hittable& world, int depth) {
     auto t = 0.5 * (unit_direction.y + 1);
     return (1.0 - t) * Colour(1.0, 1.0, 1.0) + t * Colour(0.5, 0.7, 1.0) * 255;
 }
+void lineRender(SDL_Surface*screen, hittable_list world, int y, int spp, int max_depth, camera*cam) {
+    const auto aspect_ratio = 16.0 / 9.0;
+    const int image_width = screen->w;
+    const int image_height = static_cast<int>(image_width / aspect_ratio);
+    const Colour black(0, 0, 0);
+    Colour pix_col(black);
+
+        for (int x = 0; x < screen->w; ++x) {
+            pix_col = black; //resets the colour per pixel to black
+            for (int s = 0; s < spp; s++) {
+                auto u = double(x + random_double()) / (image_width - 1);
+                auto v = double(y + random_double()) / (image_height - 1);
+                Ray ray = cam->get_ray(u, v);
+                //colours for every sample
+                pix_col = pix_col + ray_colour(ray, world, max_depth);
+            }
+            //scale spp and gamma correct
+            pix_col /= 255.f * spp;
+            pix_col.x = sqrt(pix_col.x);
+            pix_col.y = sqrt(pix_col.y);
+            pix_col.z = sqrt(pix_col.z);
+            pix_col *= 255;
+            Uint32 colour = SDL_MapRGB(screen->format, pix_col.x, pix_col.y, pix_col.z);
+            putpixel(screen, x, y, colour);
+        }
+    }
 
 int main(int argc, char **argv)
 {
@@ -153,14 +180,7 @@ int main(int argc, char **argv)
     const float scale = 1.0f / spp;
 
     //camera (should be in main.ccp)
-    ////replaced with camera class
-    //auto viewport_height = 2.0;
-    //auto viewport_width = aspect_ratio * viewport_height;
-    //auto focal_length = 1.0;
-    //auto origin = Point3f(0, 0, 0);
-    //auto horizontal = Vec3f(viewport_width, 0, 0);
-    //auto vertical = Vec3f(0, viewport_height, 0);
-    //auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vec3f(0, 0, focal_length);
+
     Point3f lookfrom(3, 3, 2);
     Point3f lookat(0, 0, -1);
     Vec3f vup(0, 1, 0);
@@ -205,62 +225,23 @@ int main(int argc, char **argv)
         SDL_FillRect(screen, nullptr, SDL_MapRGB(screen->format, 0, 0, 0));
         SDL_RenderClear(renderer);
 
-        ////Replaced with for loop below
-        //for (int y = 0; y < screen->h; ++y) {
-        //    for (int x = 0; x < screen->w; ++x) {
-        //        pix_col = black;
-        //        const Ray ray(Point3f(x, y, 0), Vec3f(0, 0, 1));
-        //        if (sphere.intersect(ray, t)) {
-        //            const Vec3f pi = ray.o + ray.d * t;
-        //            Vec3f L = light.c - pi;
-        //            Vec3f N = sphere.getNormal(pi);
-        //            Vec3f Ln = L.normalize();
-        //            double dt = Ln.dotProduct(N.normalize());
-        //            pix_col = (red + white * dt) * 0.5;
-        //            clamp255(pix_col);
-        //        }
-        //        Uint32 colour = SDL_MapRGB(screen->format, pix_col.x, pix_col.y, pix_col.z);
-        //        putpixel(screen, x, y, colour);
-        //    }
-        //}
+        /* source from Ryan Westwood starts here*/
+        {
+            t_start = std::chrono::high_resolution_clock::now();
+            ThreadPool pool(std::thread::hardware_concurrency());
 
-        ////updated with new render loop below
-        //for (int y = screen->h - 1; y >= 0; y--) {//starts from the top left
-        //    std::cerr << "\rScanLines reamining: " << y << std::flush;
-        //    for (int x = 0; x < screen->w; ++x) {
-        //        auto u = double(x) / (image_width - 1);
-        //        auto v = double(y) / (image_height - 1);
-        //        Ray ray(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-        //        Colour pix_col = ray_colour(ray,world);
-        //        Uint32 colour = SDL_MapRGB(screen->format, pix_col.x, pix_col.y, pix_col.z);
-        //        putpixel(screen, x, y, colour);
-        //    }
-        //}
-        for (int y = screen->h - 1; y >= 0; y--) {//starts from the top left
-            std::cerr << "\rScanLines reamining: " << y << std::flush;
-            for (int x = 0; x < screen->w; ++x) {
-                pix_col = black; //resets the colour per pixel to black
-                for (int s = 0; s < spp; s++) {
-                    auto u = double(x + random_double()) / (image_width - 1);
-                    auto v = double(y + random_double()) / (image_height - 1);
-                    Ray ray = cam.get_ray(u, v);
-                    //colours for every sample
-                    pix_col = pix_col + ray_colour(ray, world,max_depth);
-                }
-                //scale spp and gamma correct
-                pix_col /= 255.f * spp;
-                pix_col.x = sqrt(pix_col.x);
-                pix_col.y = sqrt(pix_col.y);
-                pix_col.z = sqrt(pix_col.z);
-                pix_col *= 255;
-                Uint32 colour = SDL_MapRGB(screen->format, pix_col.x , pix_col.y , pix_col.z );
-                putpixel(screen, x, y, colour);
+            int start = screen->h - 1;
+            int step = screen->h / std::thread::hardware_concurrency();
+            for (int y = 0; y < screen->h - 1; y++) {
+                pool.Enqueue(std::bind(lineRender, screen, world, y, spp, max_depth, &cam));
             }
         }
-
+        /*Source from Ryan Westwood ends here*/ 
         auto t_end = std::chrono::high_resolution_clock::now();
         auto passedTime = std::chrono::duration<double, std::milli>(t_end - t_start).count();
         std::cerr << "Frame render time:  " << passedTime << " ms" << std::endl;
+
+
 
         SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, screen);
         if (texture == NULL) {
