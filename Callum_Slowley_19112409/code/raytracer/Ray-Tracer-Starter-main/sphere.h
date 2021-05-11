@@ -8,7 +8,7 @@
 class sphere : public hittable {
 public:
 	sphere() {}
-	sphere(Point3f cen, double r, shared_ptr<material> m) : centre(cen), radius(r), mat_ptr(m) {};
+	sphere(Point3f cen, double r) : centre(cen), radius(r) {};
 
 	virtual bool hit(
 		const Ray& r, double t_min, double t_max, hit_record& rec) const override;

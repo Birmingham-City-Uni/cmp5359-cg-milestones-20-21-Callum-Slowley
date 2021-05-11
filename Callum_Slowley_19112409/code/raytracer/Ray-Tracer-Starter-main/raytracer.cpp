@@ -3,6 +3,10 @@
 #include "geometry.h"
 #include "SDL.h" 
 #include "Ray.h"
+#include "sphere.h"
+#include "common.h"
+#include "Camera.h"
+#include "hittable_list.h"
 #include <fstream>
 #include <chrono>
 
@@ -71,28 +75,28 @@ void putpixel(SDL_Surface* surface, int x, int y, Uint32 pixel)
 //};
 
 
-struct Sphere {
-    Point3f c;
-    double r;
-    Sphere(const Point3f& c, double r) : c(c), r(r) {}
-    Vec3f getNormal(const Vec3f& pi) const { return (pi - c) / r; }
-
-    // Solve t^2*d.d+2*t*(o-p).d+(o-p).(o-p)-R^2=0​
-    bool intersect(const Ray& ray, double& t) const {
-        const Point3f o = ray.o;
-        const Vec3f d = ray.d;
-        const Vec3f oc = o - c;
-        const double b = 2 * oc.dotProduct(d);
-        const double c = oc.dotProduct(oc) - r * r;
-        double disc = b * b - 4 * c; // a=1 as ray is normalised​
-        if (disc < 1e-4) return false; // ray misses sphere​
-        disc = sqrt(disc);
-        const double t0 = -b - disc;
-        const double t1 = -b + disc;
-        t = (t0 < t1) ? t0 : t1; // two intersections on sphere, set t to shortest​
-        return true;
-    }
-};
+//struct Sphere {
+//    Point3f c;
+//    double r;
+//    Sphere(const Point3f& c, double r) : c(c), r(r) {}
+//    Vec3f getNormal(const Vec3f& pi) const { return (pi - c) / r; }
+//
+//    // Solve t^2*d.d+2*t*(o-p).d+(o-p).(o-p)-R^2=0​
+//    bool intersect(const Ray& ray, double& t) const {
+//        const Point3f o = ray.o;
+//        const Vec3f d = ray.d;
+//        const Vec3f oc = o - c;
+//        const double b = 2 * oc.dotProduct(d);
+//        const double c = oc.dotProduct(oc) - r * r;
+//        double disc = b * b - 4 * c; // a=1 as ray is normalised​
+//        if (disc < 1e-4) return false; // ray misses sphere​
+//        disc = sqrt(disc);
+//        const double t0 = -b - disc;
+//        const double t1 = -b + disc;
+//        t = (t0 < t1) ? t0 : t1; // two intersections on sphere, set t to shortest​
+//        return true;
+//    }
+//};
 
 // method to ensure colours don’t go out of 8 bit range in RGB​
 void clamp255(Vec3f& col) {
@@ -115,14 +119,13 @@ double hit_sphere(const Point3f& centre, double radius, const Ray& r) {
     }
 }
 
-Colour ray_colour(const Ray& r) {
-    auto t = hit_sphere(Point3f(0, 0, -1), 0.5, r);
-    if (t > 0.0) {
-        Vec3f N = (r.at(t) - Vec3f(0, 0, -1)).normalize(); 
-        return 0.5 * Colour(N.x + 1, N.y + 1, N.z + 1) * 255;
+Colour ray_colour(const Ray& r, const hittable& world) {
+    hit_record rec;
+    if (world.hit(r, 0, infinity, rec)) {
+        return (rec.normal + Colour(1.0, 1.0, 1.0)) * 255 * 0.5;
     }
     Vec3f unit_direction = r.direction().normalize();
-    t = 0.5 * (unit_direction.y + 1);
+    auto t = 0.5 * (unit_direction.y + 1);
     return (1.0 - t) * Colour(1.0, 1.0, 1.0) + t * Colour(0.5, 0.7, 1.0) * 255;
 }
 
@@ -135,24 +138,34 @@ int main(int argc, char **argv)
     const auto aspect_ratio = 16.0 / 9.0;
     const int image_width = screen->w;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
+    //samples for testing
+    const int spp = 4;
+    const float scale = 1.0f / spp;
 
     //camera (should be in main.ccp)
-    auto viewport_height = 2.0;
-    auto viewport_width = aspect_ratio * viewport_height;
-    auto focal_length = 1.0;
-    auto origin = Point3f(0, 0, 0);
-    auto horizontal = Vec3f(viewport_width, 0, 0);
-    auto vertical = Vec3f(0, viewport_height, 0);
-    auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vec3f(0, 0, focal_length);
+    ////replaced with camera class
+    //auto viewport_height = 2.0;
+    //auto viewport_width = aspect_ratio * viewport_height;
+    //auto focal_length = 1.0;
+    //auto origin = Point3f(0, 0, 0);
+    //auto horizontal = Vec3f(viewport_width, 0, 0);
+    //auto vertical = Vec3f(0, viewport_height, 0);
+    //auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vec3f(0, 0, focal_length);
+    camera cam;
 
+    //world
+    hittable_list world;
+    world.add(make_shared<sphere>(Point3f(0, 0, -1), 0.5));
+    world.add(make_shared<sphere>(Point3f(0, -100.5, -1), 100));
 
     const Colour white(255, 255, 255);
     const Colour black(0, 0, 0);
     const Colour red(255, 0, 0);
 
-    const Sphere sphere(Vec3f(screen->w * 0.5, screen->h * 0.5, 50), 50);
-    const Sphere light(Vec3f(0, 0, 50), 1);
+    const sphere Testsphere(Vec3f(screen->w * 0.5, screen->h * 0.5, 50), 50);
+    const sphere light(Vec3f(0, 0, 50), 1);
 
+ 
     double t;
     Colour pix_col(black);
 
@@ -185,14 +198,30 @@ int main(int argc, char **argv)
         //    }
         //}
 
+        ////updated with new render loop below
+        //for (int y = screen->h - 1; y >= 0; y--) {//starts from the top left
+        //    std::cerr << "\rScanLines reamining: " << y << std::flush;
+        //    for (int x = 0; x < screen->w; ++x) {
+        //        auto u = double(x) / (image_width - 1);
+        //        auto v = double(y) / (image_height - 1);
+        //        Ray ray(origin, lower_left_corner + u * horizontal + v * vertical - origin);
+        //        Colour pix_col = ray_colour(ray,world);
+        //        Uint32 colour = SDL_MapRGB(screen->format, pix_col.x, pix_col.y, pix_col.z);
+        //        putpixel(screen, x, y, colour);
+        //    }
+        //}
         for (int y = screen->h - 1; y >= 0; y--) {//starts from the top left
             std::cerr << "\rScanLines reamining: " << y << std::flush;
             for (int x = 0; x < screen->w; ++x) {
-                auto u = double(x) / (image_width - 1);
-                auto v = double(y) / (image_height - 1);
-                Ray ray(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-                Colour pix_col = ray_colour(ray);
-                Uint32 colour = SDL_MapRGB(screen->format, pix_col.x, pix_col.y, pix_col.z);
+                pix_col = black; //resets the colour per pixel to black
+                for (int s = 0; s < spp; s++) {
+                    auto u = double(x + random_double()) / (image_width - 1);
+                    auto v = double(y + random_double()) / (image_height - 1);
+                    Ray ray = cam.get_ray(u, v);
+                    //colours for every sample
+                    pix_col = pix_col + ray_colour(ray, world);
+                }
+                Uint32 colour = SDL_MapRGB(screen->format, pix_col.x * scale, pix_col.y * scale, pix_col.z * scale);
                 putpixel(screen, x, y, colour);
             }
         }
@@ -208,7 +237,7 @@ int main(int argc, char **argv)
         }
         SDL_FreeSurface(screen);
 
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderCopyEx(renderer, texture, nullptr, nullptr,0,0,SDL_FLIP_VERTICAL);
         SDL_RenderPresent(renderer);
 
         SDL_DestroyTexture(texture);
