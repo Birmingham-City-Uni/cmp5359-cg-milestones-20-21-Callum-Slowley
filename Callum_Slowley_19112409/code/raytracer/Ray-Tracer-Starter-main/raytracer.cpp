@@ -70,36 +70,6 @@ void putpixel(SDL_Surface* surface, int x, int y, Uint32 pixel)
         break;
     }
 }
-////The Code her is now replaced with the class below
-//struct Ray {
-//    Point3f o;
-//    Vec3f d;
-//    Ray(const Point3f& o, const Vec3f& d) : o(o), d(d) {}
-//};
-
-
-//struct Sphere {
-//    Point3f c;
-//    double r;
-//    Sphere(const Point3f& c, double r) : c(c), r(r) {}
-//    Vec3f getNormal(const Vec3f& pi) const { return (pi - c) / r; }
-//
-//    // Solve t^2*d.d+2*t*(o-p).d+(o-p).(o-p)-R^2=0​
-//    bool intersect(const Ray& ray, double& t) const {
-//        const Point3f o = ray.o;
-//        const Vec3f d = ray.d;
-//        const Vec3f oc = o - c;
-//        const double b = 2 * oc.dotProduct(d);
-//        const double c = oc.dotProduct(oc) - r * r;
-//        double disc = b * b - 4 * c; // a=1 as ray is normalised​
-//        if (disc < 1e-4) return false; // ray misses sphere​
-//        disc = sqrt(disc);
-//        const double t0 = -b - disc;
-//        const double t1 = -b + disc;
-//        t = (t0 < t1) ? t0 : t1; // two intersections on sphere, set t to shortest​
-//        return true;
-//    }
-//};
 
 // method to ensure colours don’t go out of 8 bit range in RGB​
 void clamp255(Vec3f& col) {
@@ -108,19 +78,6 @@ void clamp255(Vec3f& col) {
     col.z = (col.z > 255) ? 255 : (col.z < 0) ? 0 : col.z;
 }
 
-//double hit_sphere(const Point3f& centre, double radius, const Ray& r) {
-//    Vec3f oc = r.origin() - centre;
-//    auto a = r.direction().dotProduct(r.direction());
-//    auto b = 2.0 * oc.dotProduct(r.direction());
-//    auto c = oc.dotProduct(oc) - radius * radius;
-//    auto discriminant = b * b - 4 * a * c;
-//    if (discriminant < 0) {
-//        return -1.0;
-//    }
-//    else {
-//        return (-b - sqrt(discriminant)) / (2.0 * a);
-//    }
-//}
 
 Colour ray_colour(const Ray& r, const hittable& world, int depth) {
     hit_record rec;
@@ -163,6 +120,11 @@ void lineRender(SDL_Surface*screen, hittable_list world, int y, int spp, int max
             putpixel(screen, x, y, colour);
         }
     }
+
+hittable_list test_scene() {
+    hittable_list world;
+
+}
 
 int main(int argc, char **argv)
 {
@@ -207,10 +169,6 @@ int main(int argc, char **argv)
     const Colour white(255, 255, 255);
     const Colour black(0, 0, 0);
     const Colour red(255, 0, 0);
-
-    //const sphere Testsphere(Vec3f(screen->w * 0.5, screen->h * 0.5, 50), 50);
-    //const sphere light(Vec3f(0, 0, 50), 1);
-
  
     double t;
     Colour pix_col(black);
