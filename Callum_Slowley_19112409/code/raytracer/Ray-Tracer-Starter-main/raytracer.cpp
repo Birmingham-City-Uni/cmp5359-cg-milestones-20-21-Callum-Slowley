@@ -12,6 +12,7 @@
 #include "Multithreading.h"
 #include "model.h"
 #include "triangles.h"
+#include "bvh.h"
 #include <fstream>
 #include <chrono>
 
@@ -127,7 +128,7 @@ void lineRender(SDL_Surface*screen, hittable_list world, int y, int spp, int max
 
 hittable_list test_scene() {
     hittable_list world;
-    Model* model = new Model("cc_t.obj");
+    Model* model = new Model("test.obj");
     //loading glass model
     Vec3f transform(0, 0.8, 0);
     auto glass = make_shared<dielectric>(1.5);
@@ -158,7 +159,8 @@ hittable_list test_scene() {
     auto ground_material = make_shared<lambertian>(Colour(0.5, 0.5, 0.5));
     world.add(make_shared<sphere>(Point3f(0, -1000, 0), 1000, ground_material));
     
-    return world;
+    // return world; //without bvh
+    return hittable_list(make_shared<bvh_node>(world)); //with bvh
 }
 
 int main(int argc, char **argv)
