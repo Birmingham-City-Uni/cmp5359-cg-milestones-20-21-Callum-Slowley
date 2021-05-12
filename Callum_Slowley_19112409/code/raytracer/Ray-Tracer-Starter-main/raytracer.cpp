@@ -131,7 +131,7 @@ hittable_list test_scene() {
     Model* model = new Model("test.obj");
     //loading glass model
     Vec3f transform(0, 0.8, 0);
-    auto glass = make_shared<dielectric>(1.5);
+    auto glass = make_shared<dielectric>(1.2);
     for (uint32_t i = 0; i < model->nfaces(); i++) {
         const Vec3f& v0 = model->vert(model->face(i)[0]);
         const Vec3f& v1 = model->vert(model->face(i)[1]);
@@ -139,7 +139,7 @@ hittable_list test_scene() {
         world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, glass));
     }
     //loading mat_diffuse model 
-    transform= Vec3f(1.2, 0.8, 0);
+    transform= Vec3f(12, 0.8, 0);
     auto mat_diffuse = make_shared<lambertian>(Colour(1.2,0.8,0));
     for (uint32_t i = 0; i < model->nfaces(); i++) {
         const Vec3f& v0 = model->vert(model->face(i)[0]);
@@ -148,7 +148,7 @@ hittable_list test_scene() {
         world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, mat_diffuse));
     }
     //loading mat_metal model 
-    transform = Vec3f(-1.2, 0.8, 0);
+    transform = Vec3f(-12, 0.8, 0);
     auto mat_metal = make_shared<metal>(Colour(0.7, 0.6, 0.5),0.0);
     for (uint32_t i = 0; i < model->nfaces(); i++) {
         const Vec3f& v0 = model->vert(model->face(i)[0]);
@@ -159,7 +159,7 @@ hittable_list test_scene() {
     auto ground_material = make_shared<lambertian>(Colour(0.5, 0.5, 0.5));
     world.add(make_shared<sphere>(Point3f(0, -1000, 0), 1000, ground_material));
     
-    // return world; //without bvh
+    //return world; //without bvh
     return hittable_list(make_shared<bvh_node>(world)); //with bvh
 }
 
@@ -175,13 +175,13 @@ int main(int argc, char **argv)
     const int max_depth = 50;
 
     //samples for testing
-    const int spp = 4;
+    const int spp = 50;
     const float scale = 1.0f / spp;
 
     //camera (should be in main.ccp)
 
-    Point3f lookfrom(3, 3, 2);
-    Point3f lookat(0, 0, -1);
+    Point3f lookfrom(50, 50, 50);
+    Point3f lookat(0, 0, 0);
     Vec3f vup(0, 1, 0);
     auto dist_to_focus = (lookfrom - lookat).length();
     auto aperture = 2.0;
