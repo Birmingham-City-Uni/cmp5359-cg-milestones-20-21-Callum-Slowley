@@ -2,6 +2,7 @@
 #include "hittable.h"
 #include "geometry.h"
 
+
 class triangle :public hittable {
 public:
 	triangle() {}
@@ -9,9 +10,13 @@ public:
 		v0(vert0), v1(vert1), v2(vert2), mat_ptr(m) {
 		normal = (v1 - v0).crossProduct(v2 - v0);
 	};
+
 	triangle(Point3f vert0, Point3f vert1, Point3f vert2, Vec3f vn, shared_ptr<material> m) :v0(vert0), v1(vert1), v2(vert2), normal(vn), mat_ptr(m) {};
 
 	virtual bool hit(const Ray& r, double t_min, double t_max, hit_record& rec) const override;
+
+	virtual bool bounding_box(aabb& output_box) const override;
+
 public:
 	Point3f v0, v1, v2;
 	Vec3f normal;
@@ -53,5 +58,16 @@ bool triangle::hit(const Ray& r, double t_min, double t_max, hit_record& rec) co
 	rec.normal = normal;
 	rec.mat_ptr = mat_ptr;
 	
+	return true;
+}
+
+inline bool triangle::bounding_box(aabb& output_box)const {
+	float min[3];
+	float max[3];
+	for (int i = 0.; i < 3; i++) { // for each dimension calculating the min and max values of vertices in the triangle
+		min[i] = std::min(v0[i], std::min(v1[i], v2[i]));
+		max[i] = std::max(v0[i], std::max(v1[i], v2[i]));
+	}
+	output_box = aabb(Vec3f(min[0], min[1], min[2]), Vec3f(max[0], max[1], max[2]));
 	return true;
 }

@@ -2,6 +2,7 @@
 #include "Ray.h"
 #include "geometry.h"
 #include "common.h"
+#include "aabb.h"
 
 class material; //forward delaration of material class
 
@@ -26,4 +27,6 @@ class hittable {
 public:
 	// pure virtual, must be overriden in derived classes
 	virtual bool hit(const Ray& r, double t_min, double t_max, hit_record& rec) const = 0;
+
+	virtual bool bounding_box(aabb& output_box) const = 0;
 };

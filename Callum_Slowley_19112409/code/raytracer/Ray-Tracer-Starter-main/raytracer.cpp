@@ -111,7 +111,8 @@ void lineRender(SDL_Surface*screen, hittable_list world, int y, int spp, int max
                 Ray ray = cam->get_ray(u, v);
                 //colours for every sample
                 pix_col = pix_col + ray_colour(ray, world, max_depth);
-                std::cerr << "\r ScanLines remaining:  " << y << std::flush;
+                //scanlines to see that its working
+                std::cerr << "\r ScanLines remaining:  " << y << " " << std::flush;
             }
             //scale spp and gamma correct
             pix_col /= 255.f * spp;
