@@ -175,7 +175,7 @@ int main(int argc, char **argv)
     const int max_depth = 50;
 
     //samples for testing
-    const int spp = 50;
+    const int spp = 1;
     const float scale = 1.0f / spp;
 
     //camera (should be in main.ccp)
@@ -184,8 +184,8 @@ int main(int argc, char **argv)
     Point3f lookat(0, 0, 0);
     Vec3f vup(0, 1, 0);
     auto dist_to_focus = (lookfrom - lookat).length();
-    auto aperture = 2.0;
-    camera cam(lookfrom,lookat,vup,20,aspect_ratio,aperture,dist_to_focus);
+    auto aperture = 0.05;
+    camera cam(lookfrom,lookat,vup,20,aspect_ratio,aperture,50);
 
     //world
     hittable_list world;
