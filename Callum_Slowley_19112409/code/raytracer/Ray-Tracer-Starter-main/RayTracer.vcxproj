@@ -157,12 +157,14 @@
     <ClInclude Include="hittable.h" />
     <ClInclude Include="hittable_list.h" />
     <ClInclude Include="material.h" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="Multithreading.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="sphere.h" />
     <ClInclude Include="triangles.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="raytracer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

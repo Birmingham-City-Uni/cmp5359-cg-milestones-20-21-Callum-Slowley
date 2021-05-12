@@ -10,6 +10,8 @@
 #include "hittable_list.h"
 #include "material.h"
 #include "Multithreading.h"
+#include "model.h"
+#include "triangles.h"
 #include <fstream>
 #include <chrono>
 
@@ -109,6 +111,7 @@ void lineRender(SDL_Surface*screen, hittable_list world, int y, int spp, int max
                 Ray ray = cam->get_ray(u, v);
                 //colours for every sample
                 pix_col = pix_col + ray_colour(ray, world, max_depth);
+                std::cerr << "\r ScanLines remaining:  " << y << std::flush;
             }
             //scale spp and gamma correct
             pix_col /= 255.f * spp;
@@ -123,7 +126,38 @@ void lineRender(SDL_Surface*screen, hittable_list world, int y, int spp, int max
 
 hittable_list test_scene() {
     hittable_list world;
-
+    Model* model = new Model("cc_t.obj");
+    //loading glass model
+    Vec3f transform(0, 0.8, 0);
+    auto glass = make_shared<dielectric>(1.5);
+    for (uint32_t i = 0; i < model->nfaces(); i++) {
+        const Vec3f& v0 = model->vert(model->face(i)[0]);
+        const Vec3f& v1 = model->vert(model->face(i)[1]);
+        const Vec3f& v2 = model->vert(model->face(i)[2]);
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, glass));
+    }
+    //loading mat_diffuse model 
+    transform= Vec3f(1.2, 0.8, 0);
+    auto mat_diffuse = make_shared<lambertian>(Colour(1.2,0.8,0));
+    for (uint32_t i = 0; i < model->nfaces(); i++) {
+        const Vec3f& v0 = model->vert(model->face(i)[0]);
+        const Vec3f& v1 = model->vert(model->face(i)[1]);
+        const Vec3f& v2 = model->vert(model->face(i)[2]);
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, mat_diffuse));
+    }
+    //loading mat_metal model 
+    transform = Vec3f(-1.2, 0.8, 0);
+    auto mat_metal = make_shared<metal>(Colour(0.7, 0.6, 0.5),0.0);
+    for (uint32_t i = 0; i < model->nfaces(); i++) {
+        const Vec3f& v0 = model->vert(model->face(i)[0]);
+        const Vec3f& v1 = model->vert(model->face(i)[1]);
+        const Vec3f& v2 = model->vert(model->face(i)[2]);
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, mat_metal));
+    }
+    auto ground_material = make_shared<lambertian>(Colour(0.5, 0.5, 0.5));
+    world.add(make_shared<sphere>(Point3f(0, -1000, 0), 1000, ground_material));
+    
+    return world;
 }
 
 int main(int argc, char **argv)
@@ -153,18 +187,7 @@ int main(int argc, char **argv)
     //world
     hittable_list world;
 
-    //materials 
-    auto material_ground = make_shared<lambertian>(Colour(0.8, 0.8, 0.0));
-    auto material_center = make_shared<lambertian>(Colour(0.1, 0.2, 0.5));
-    auto material_left = make_shared <dielectric>(1.5);
-    auto material_right = make_shared <metal>(Colour(0.8, 0.6, 0.2),0.0);
-
-    //objects
-    world.add(make_shared<sphere>(Point3f(0, -100.5, -1), 100.0, material_ground));
-    world.add(make_shared<sphere>(Point3f(0, 0.0, -1.0), 0.5, material_center));
-    world.add(make_shared<sphere>(Point3f(-1.0, 0.0, -1.0), 0.5, material_left));
-    world.add(make_shared<sphere>(Point3f(-1.0, 0.0, -1.0), -0.45, material_left));
-    world.add(make_shared<sphere>(Point3f(1.0, 0.0, -1.0), 0.5, material_right));
+    world = test_scene();
 
     const Colour white(255, 255, 255);
     const Colour black(0, 0, 0);
