@@ -7,6 +7,9 @@ struct hit_record;
 class material {
 public:
 	virtual bool scatter(const Ray& r_in, const hit_record& rec, Colour& attenuation, Ray& scattered) const = 0;
+	virtual Colour emitted() const {
+		return Colour(0, 0, 0);
+	}
 };
 
 Vec3f reflect(const Vec3f& v, const Vec3f& n) {
@@ -89,4 +92,18 @@ public:
 	}
 public:
 	Colour albedo;
+};
+
+class diffuse_light : public material {
+public:
+	diffuse_light(){}
+	diffuse_light(Colour c) :emit(make_shared<Colour>(c)) {}
+	virtual bool scatter(const Ray& r_in, const hit_record& rec, Colour& attenuation, Ray& scattered) const override {
+		return false;
+	}
+	virtual Colour emitted() const override {
+		return *emit;
+	}
+public:
+	shared_ptr<Colour> emit;
 };

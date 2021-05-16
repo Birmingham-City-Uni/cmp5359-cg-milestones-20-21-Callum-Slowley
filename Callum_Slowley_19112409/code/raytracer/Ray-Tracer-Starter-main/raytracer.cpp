@@ -82,22 +82,23 @@ void clamp255(Vec3f& col) {
 }
 
 
-Colour ray_colour(const Ray& r, const hittable& world, int depth) {
+Colour ray_colour(const Ray& r,const Colour& background, const hittable& world, int depth) {
     hit_record rec;
     //if we have hit the depth limit no more light has been gathered
     if (depth <= 0)  return Colour(0, 0, 0); 
-    if (world.hit(r,  0.001, infinity, rec)) {
-        Ray scattered;
-        Colour attenuation;
-        if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-            return attenuation * ray_colour(scattered, world, depth - 1);
-        return Colour(0, 0, 0);
-    }
+    if (!world.hit(r, 0.001, infinity, rec)) { return background; }
+    Ray scattered;
+    Colour attenuation;
+    Colour emitted = rec.mat_ptr->emitted();
+    if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+        return emitted; 
+    return attenuation * ray_colour(scattered, background, world, depth - 1);
     Vec3f unit_direction = r.direction().normalize();
     auto t = 0.5 * (unit_direction.y + 1);
     return (1.0 - t) * Colour(1.0, 1.0, 1.0) + t * Colour(0.5, 0.7, 1.0) * 255;
 }
 void lineRender(SDL_Surface*screen, hittable_list world, int y, int spp, int max_depth, camera*cam) {
+    Colour background(0, 0, 0);
     const auto aspect_ratio = 16.0 / 9.0;
     const int image_width = screen->w;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
@@ -110,8 +111,11 @@ void lineRender(SDL_Surface*screen, hittable_list world, int y, int spp, int max
                 auto u = double(x + random_double()) / (image_width - 1);
                 auto v = double(y + random_double()) / (image_height - 1);
                 Ray ray = cam->get_ray(u, v);
+                Vec3f unit_direction = ray.direction().normalize();
+                auto t = 0.5 * (unit_direction.y + 1.0);
+                background = (1.0 - t) * Colour(1.0, 1.0, 1.0) + t * Colour(0.5, 0.7, 1.0) * 255;
                 //colours for every sample
-                pix_col = pix_col + ray_colour(ray, world, max_depth);
+                pix_col = pix_col + ray_colour(ray,background, world, max_depth);
                 //scanlines to see that its working
                 std::cerr << "\r ScanLines remaining:  " << y << " " << std::flush;
             }
@@ -156,6 +160,10 @@ hittable_list test_scene() {
         const Vec3f& v2 = model->vert(model->face(i)[2]);
         world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, mat_metal));
     }
+    //lighting example
+    auto mateiral4 = make_shared<diffuse_light>(Colour(255, 255, 255));
+    world.add(make_shared<sphere>(Point3f(0, 5, 0), 1.0, mateiral4));
+
     auto ground_material = make_shared<lambertian>(Colour(0.5, 0.5, 0.5));
     world.add(make_shared<sphere>(Point3f(0, -1000, 0), 1000, ground_material));
     
