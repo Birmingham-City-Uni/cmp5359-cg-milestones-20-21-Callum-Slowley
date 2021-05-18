@@ -1,0 +1,171 @@
+# Exported for PBRT Version : v3 Master Branch
+
+Film "image"
+	"integer yresolution" [1080]
+	"float scale" [1.0]
+	"float diagonal" [43.2665287723]
+	"integer xresolution" [1090]
+
+Sampler "halton"
+	"integer pixelsamples" [4]
+
+PixelFilter "gaussian"
+	"float ywidth" [2.0]
+	"float xwidth" [2.0]
+	"float alpha" [2.0]
+
+Integrator "path"
+	"string lightsamplestrategy" ["spatial"]
+	"integer maxdepth" [5]
+	"float rrthreshold" [1.0]
+
+Accelerator "bvh"
+	"string splitmethod" ["sah"]
+	"integer maxnodeprims" [4]
+
+# Camera begin
+Scale -1 1 1
+LookAt 176.252466 190.067912 105.629419 45.428128 64.981460 -14.669726 -0.423663 0.817765 -0.389578
+Camera "perspective"
+	"float fov" [54.4322231146]
+	#"float screenwindow" [-1.0 1.0 -0.990825688073 0.990825688073]
+# Camera end
+
+WorldBegin
+	AttributeBegin
+		# Maya Directional Light : |directionalLight1|directionalLightShape1
+		LightSource "distant"
+			"point to" [-0.742123193527 -0.253175829396 0.620608705255]
+			"rgb scale" [1.0 1.0 1.0]
+			"rgb L" [1.0 1.0 1.0]
+	AttributeEnd
+
+	MakeNamedMaterial "PBRTDisneyMaterial1"
+		"float difftrans" [1.0]
+		"float spectrans" [0.0]
+		"float clearcoatgloss" [1.0]
+		"rgb color" [0.5 0.5 0.5]
+		"float sheentint" [0.5]
+		"float speculartint" [0.0]
+		"float roughness" [0.5]
+		"rgb scatterdistance" [0.0 0.0 0.0]
+		"float flatness" [0.0]
+		"float eta" [1.5]
+		"bool thin" ["false"]
+		"float clearcoat" [0.0]
+		"float anisotropic" [0.0]
+		"float metallic" [0.0]
+		"string type" ["disney"]
+		"float sheen" [0.0]
+
+	MakeNamedMaterial "PBRTGlassMaterial1"
+		"bool remaproughness" ["true"]
+		"rgb Kr" [1.0 1.0 1.0]
+		"string type" ["glass"]
+		"float index" [1.5]
+		"rgb Kt" [1.0 1.0 1.0]
+
+	MakeNamedMaterial "PBRTGlassMaterial2"
+		"bool remaproughness" ["true"]
+		"rgb Kr" [0.0 1.0 1.0]
+		"string type" ["glass"]
+		"float index" [1.35000002384]
+		"rgb Kt" [0.0 1.0 1.0]
+
+	MakeNamedMaterial "lambert1"
+		"string type" ["matte"]
+		"rgb Kd" [0.5 0.5 0.5]
+
+	MakeNamedMaterial "PBRTMirrorMaterial1"
+		"rgb Kr" [1.0 1.0 1.0]
+		"string type" ["mirror"]
+
+	ObjectBegin "|Dandelion"
+		# Maya Geometry : |Dandelion|DandelionShape
+		NamedMaterial "PBRTDisneyMaterial1"
+		Include "__Dandelion__DandelionShape.pbrt"
+	ObjectEnd
+
+	AttributeBegin
+		# Maya Transform : |Dandelion
+		ObjectInstance "|Dandelion"
+	AttributeEnd
+
+	ObjectBegin "|pCube2"
+		# Maya Geometry : |pCube2|pCubeShape2
+		NamedMaterial "Handle"
+		Include "__pCube2__pCubeShape2.pbrt"
+	ObjectEnd
+
+	AttributeBegin
+		# Maya Transform : |pCube2
+		ObjectInstance "|pCube2"
+	AttributeEnd
+
+	ObjectBegin "|Water1"
+		# Maya Geometry : |Water1|WaterShape1
+		NamedMaterial "PBRTGlassMaterial1"
+		Include "__Water1__WaterShape1.pbrt"
+	ObjectEnd
+
+	AttributeBegin
+		# Maya Transform : |Water1
+		ObjectInstance "|Water1"
+	AttributeEnd
+
+	ObjectBegin "|pCube1"
+		# Maya Geometry : |pCube1|pCubeShape1
+		NamedMaterial "TableMat"
+		Include "__pCube1__pCubeShape1.pbrt"
+	ObjectEnd
+
+	AttributeBegin
+		# Maya Transform : |pCube1
+		ObjectInstance "|pCube1"
+	AttributeEnd
+
+	ObjectBegin "|Waterball"
+		# Maya Geometry : |Waterball|Waterball
+		NamedMaterial "PBRTGlassMaterial2"
+		Include "__Waterball__Waterball.pbrt"
+	ObjectEnd
+
+	AttributeBegin
+		# Maya Transform : |Waterball
+		ObjectInstance "|Waterball"
+	AttributeEnd
+
+	ObjectBegin "|pasted__Backwall"
+		# Maya Geometry : |pasted__Backwall|pasted__BackwallShape
+		NamedMaterial "lambert1"
+		Include "__pasted__Backwall__pasted__BackwallShape.pbrt"
+	ObjectEnd
+
+	AttributeBegin
+		# Maya Transform : |pasted__Backwall
+		ObjectInstance "|pasted__Backwall"
+	AttributeEnd
+
+	ObjectBegin "|Backwall"
+		# Maya Geometry : |Backwall|BackwallShape
+		NamedMaterial "lambert1"
+		Include "__Backwall__BackwallShape.pbrt"
+	ObjectEnd
+
+	AttributeBegin
+		# Maya Transform : |Backwall
+		ObjectInstance "|Backwall"
+	AttributeEnd
+
+	ObjectBegin "|Mirror"
+		# Maya Geometry : |Mirror|MirrorShape
+		NamedMaterial "PBRTMirrorMaterial1"
+		Include "__Mirror__MirrorShape.pbrt"
+	ObjectEnd
+
+	AttributeBegin
+		# Maya Transform : |Mirror
+		ObjectInstance "|Mirror"
+	AttributeEnd
+
+WorldEnd
