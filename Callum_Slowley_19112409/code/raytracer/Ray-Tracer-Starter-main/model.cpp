@@ -27,15 +27,28 @@ Model::Model(const char *filename) : verts_(), faces_(), vts_() {
             for (int i=0; i<2; i++) iss >> vt[i]; 
             vts_.push_back(vt);
         }
-        else if (!line.compare(0, 2, "f ")) { // f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ... making assumption v1==vt1 etc.
-            std::vector<int> f;
-            int itrash, idx;
+        else if (!line.compare(0, 3, "vn ")) { // read 3 characters and check the line starts with "vt "
             iss >> trash;
-            while (iss >> idx >> trash >> itrash >> trash >> itrash) { // read in v_i to idx and discard /vt_i/vn_i
-                idx--; // in wavefront obj all indices start at 1, not zero, we need them to start at zero
-                f.push_back(idx);
+            iss >> trash;
+            Vec3f vn;
+            for (int i = 0; i < 3; i++) iss >> vn[i];
+            vns_.push_back(vn);
+        }
+        else if (!line.compare(0, 2, "f ")) { // f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 
+            std::vector<int> f;
+            std::vector<int> vns;
+            std::vector<int> uvs;
+            int itrash, v_idx, vt_idx, vn_idx;
+            iss >> trash;
+            while (iss >> v_idx >> trash >> vt_idx >> trash >> vn_idx) {
+                v_idx--, vt_idx--, vn_idx--; // in wavefront obj all indices start at 1, not zero
+                f.push_back(v_idx);
+                vns.push_back(vn_idx);
+                uvs.push_back(vt_idx);
             }
             faces_.push_back(f);
+            vnorms_.push_back(vns);
+            uvs_.push_back(uvs);
         }
     }
     std::cerr << "# v# " << verts_.size() << " f# "  << faces_.size() << std::endl;
@@ -56,10 +69,20 @@ std::vector<int> Model::face(int idx) {
     return faces_[idx];
 }
 
+std::vector<int> Model::vNorms(int idx) {
+    return vnorms_[idx];
+}
+
+std::vector<int> Model::uvs(int idx) {
+    return uvs_[idx];
+}
+
 Vec3f Model::vert(int i) {
     return verts_[i];
 }
-
+Vec3f Model::vnorms(int i) {
+    return vns_[i];
+}
 Vec2f Model::vt(int i) {
     return vts_[i];
 }

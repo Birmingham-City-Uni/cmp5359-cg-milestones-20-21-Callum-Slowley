@@ -18,6 +18,7 @@ public:
 	Point3f centre;
 	double radius;
 	shared_ptr<material> mat_ptr;
+
 };
 
 bool sphere::hit(const Ray& r, double t_min, double t_max, hit_record& rec) const {

@@ -21,6 +21,12 @@ inline double degrees_to_radians(double degrees) {
 	return degrees * pi / 180;
 }
 
+// added clamp to common for the textures
+inline double clamp(double x, double min, double max) {
+	if (x < min) { return min; }
+	if (x > max) { return max; }
+	return x;
+}
 
 inline double random_double() {
 	//returns a radom real in [0,1]

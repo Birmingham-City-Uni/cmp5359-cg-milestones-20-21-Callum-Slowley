@@ -162,12 +162,16 @@
     <ClInclude Include="model.h" />
     <ClInclude Include="Multithreading.h" />
     <ClInclude Include="Ray.h" />
+    <ClInclude Include="rtw_stb_image.h" />
     <ClInclude Include="sphere.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="tgaimage.h" />
     <ClInclude Include="triangles.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="model.cpp" />
     <ClCompile Include="raytracer.cpp" />
+    <ClCompile Include="tgaimage.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
