@@ -149,7 +149,7 @@ hittable_list test_scene() {
     //loading table model 
     auto transform= Vec3f(0, 0, 0);
     auto mat_texture = make_shared<image_texture>("TableUvs.jpg");
-    auto mat_diffuse = make_shared<lambertian>(mat_texture);
+    auto mat_diffuse = make_shared<lambertian>(make_shared<image_texture>("TableUvs.jpg"));
     for (uint32_t i = 0; i < model->nfaces(); i++) {
         const Vec3f& v0 = model->vert(model->face(i)[0]);
         const Vec3f& v1 = model->vert(model->face(i)[1]);
@@ -159,9 +159,12 @@ hittable_list test_scene() {
         const Vec3f& v1N = model->vnorms(model->vNorms(i)[1]);
         const Vec3f& v2N = model->vnorms(model->vNorms(i)[2]);
 
-        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform,v0N,v1N,v2N,mat_diffuse));
+        const Vec2f& UVu = model->vt(model->uvs(i)[0]);
+        const Vec2f& UVy = model->vt(model->uvs(i)[1]);
+
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform,v0N,v1N,v2N, UVu, UVy,mat_diffuse));
     }
-    //loading table handel 
+    ////loading table handel 
     auto metal_diffuse = make_shared<metal>(Colour(0, 0, 0),0);
     for (uint32_t i = 0; i < handle->nfaces(); i++) {
         const Vec3f& v0 = handle->vert(handle->face(i)[0]);
@@ -171,9 +174,13 @@ hittable_list test_scene() {
         const Vec3f& v0N = handle->vnorms(handle->vNorms(i)[0]);
         const Vec3f& v1N = handle->vnorms(handle->vNorms(i)[1]);
         const Vec3f& v2N = handle->vnorms(handle->vNorms(i)[2]);
-        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, metal_diffuse));
+
+        const Vec2f& UVu = handle->vt(handle->uvs(i)[0]);
+        const Vec2f& UVy = handle->vt(handle->uvs(i)[1]);
+
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N,UVu,UVy, metal_diffuse));
     }
-    //loading mirror
+    ////loading mirror
     mat_diffuse = make_shared<lambertian>(Colour(0,1,1));
     for (uint32_t i = 0; i < mirror->nfaces(); i++) {
         const Vec3f& v0 = mirror->vert(mirror->face(i)[0]);
@@ -183,9 +190,14 @@ hittable_list test_scene() {
         const Vec3f& v0N = mirror->vnorms(mirror->vNorms(i)[0]);
         const Vec3f& v1N = mirror->vnorms(mirror->vNorms(i)[1]);
         const Vec3f& v2N = mirror->vnorms(mirror->vNorms(i)[2]);
-        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, mat_diffuse));
+
+        const Vec2f& UVu = mirror->vt(mirror->uvs(i)[0]);
+        const Vec2f& UVy = mirror->vt(mirror->uvs(i)[1]);
+
+
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, UVu,UVy, mat_diffuse));
     }
-    //loading mirrorinner  
+    ////loading mirrorinner  
      metal_diffuse = make_shared<metal>(Colour(1, 1, 1), 0);
     for (uint32_t i = 0; i < mirrorinner->nfaces(); i++) {
         const Vec3f& v0 = mirrorinner->vert(mirrorinner->face(i)[0]);
@@ -195,9 +207,13 @@ hittable_list test_scene() {
         const Vec3f& v0N = mirrorinner->vnorms(mirrorinner->vNorms(i)[0]);
         const Vec3f& v1N = mirrorinner->vnorms(mirrorinner->vNorms(i)[1]);
         const Vec3f& v2N = mirrorinner->vnorms(mirrorinner->vNorms(i)[2]);
-        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, metal_diffuse));
+
+        const Vec2f& UVu = mirrorinner->vt(mirrorinner->uvs(i)[0]);
+        const Vec2f& UVy = mirrorinner->vt(mirrorinner->uvs(i)[1]);
+
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, UVu,UVy, metal_diffuse));
     }
-    //loading glass ball
+    ////loading glass ball
     auto glass_diffuse = make_shared<dielectric>(1.5);
     for (uint32_t i = 0; i < glassball->nfaces(); i++) {
         const Vec3f& v0 = glassball->vert(glassball->face(i)[0]);
@@ -207,9 +223,13 @@ hittable_list test_scene() {
         const Vec3f& v0N = glassball->vnorms(glassball->vNorms(i)[0]);
         const Vec3f& v1N = glassball->vnorms(glassball->vNorms(i)[1]);
         const Vec3f& v2N = glassball->vnorms(glassball->vNorms(i)[2]);
-        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, glass_diffuse));
+
+        const Vec2f& UVu = glassball->vt(glassball->uvs(i)[0]);
+        const Vec2f& UVy = glassball->vt(glassball->uvs(i)[1]);
+
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N,UVu,UVy, glass_diffuse));
     }
-    //loading water
+    ////loading water
     auto water_mat = make_shared<Water>(1.3);
     for (uint32_t i = 0; i < water->nfaces(); i++) {
         const Vec3f& v0 = water->vert(water->face(i)[0]);
@@ -219,9 +239,13 @@ hittable_list test_scene() {
         const Vec3f& v0N = water->vnorms(water->vNorms(i)[0]);
         const Vec3f& v1N = water->vnorms(water->vNorms(i)[1]);
         const Vec3f& v2N = water->vnorms(water->vNorms(i)[2]);
-        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, water_mat));
+
+        const Vec2f& UVu = water->vt(water->uvs(i)[0]);
+        const Vec2f& UVy = water->vt(water->uvs(i)[1]);
+
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N,UVu,UVy, water_mat));
     }
-    ////loading wall
+    //////loading wall
     mat_diffuse = make_shared<lambertian>(Colour(0.5, 0.5, 0.5));
     for (uint32_t i = 0; i < wall->nfaces(); i++) {
         const Vec3f& v0 = wall->vert(wall->face(i)[0]);
@@ -231,9 +255,13 @@ hittable_list test_scene() {
         const Vec3f& v0N = wall->vnorms(wall->vNorms(i)[0]);
         const Vec3f& v1N = wall->vnorms(wall->vNorms(i)[1]);
         const Vec3f& v2N = wall->vnorms(wall->vNorms(i)[2]);
-        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, mat_diffuse));
+
+        const Vec2f& UVu = wall->vt(wall->uvs(i)[0]);
+        const Vec2f& UVy = wall->vt(wall->uvs(i)[1]);
+
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N,UVu,UVy, mat_diffuse));
     }
-    //loading floor
+    ////loading floor
     mat_diffuse = make_shared<lambertian>(Colour(0.5, 0.5, 0.5));
     for (uint32_t i = 0; i < floor->nfaces(); i++) {
         const Vec3f& v0 = floor ->vert(floor->face(i)[0]);
@@ -243,9 +271,13 @@ hittable_list test_scene() {
         const Vec3f& v0N = floor->vnorms(floor->vNorms(i)[0]);
         const Vec3f& v1N = floor->vnorms(floor->vNorms(i)[1]);
         const Vec3f& v2N = floor->vnorms(floor->vNorms(i)[2]);
-        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, mat_diffuse));
+
+        const Vec2f& UVu = floor->vt(floor->uvs(i)[0]);
+        const Vec2f& UVy = floor->vt(floor->uvs(i)[1]);
+
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N,UVu,UVy, mat_diffuse));
     }
-    //loading flower
+    ////loading flower
     mat_texture = make_shared<image_texture>("qlCc6_4K_Albedo.jpg");
     mat_diffuse = make_shared<lambertian>(mat_texture);
     for (uint32_t i = 0; i < flower->nfaces(); i++) {
@@ -256,9 +288,13 @@ hittable_list test_scene() {
         const Vec3f& v0N = flower->vnorms(flower->vNorms(i)[0]);
         const Vec3f& v1N = flower->vnorms(flower->vNorms(i)[1]);
         const Vec3f& v2N = flower->vnorms(flower->vNorms(i)[2]);
-        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, mat_diffuse));
+
+        const Vec2f& UVu = flower->vt(flower->uvs(i)[0]);
+        const Vec2f& UVy = flower->vt(flower->uvs(i)[1]);
+
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N,UVu,UVy, mat_diffuse));
     }
-    //loading arealight
+    ////loading arealight
     auto light_diffuse = make_shared<diffuse_light>(Colour(255,255,255));
     for (uint32_t i = 0; i < areaLight->nfaces(); i++) {
         const Vec3f& v0 = areaLight->vert(areaLight->face(i)[0]);
@@ -268,7 +304,11 @@ hittable_list test_scene() {
         const Vec3f& v0N = areaLight->vnorms(areaLight->vNorms(i)[0]);
         const Vec3f& v1N = areaLight->vnorms(areaLight->vNorms(i)[1]);
         const Vec3f& v2N = areaLight->vnorms(areaLight->vNorms(i)[2]);
-        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, light_diffuse));
+
+        const Vec2f& UVu = areaLight->vt(areaLight->uvs(i)[0]);
+        const Vec2f& UVy = areaLight->vt(areaLight->uvs(i)[1]);
+
+        world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N,UVu,UVy, light_diffuse));
     }
     return hittable_list(make_shared<bvh_node>(world)); //with bvh
 }
@@ -285,7 +325,7 @@ int main(int argc, char **argv)
     const int max_depth = 50;
 
     //samples for testing
-    const int spp =1;
+    const int spp =1000;
     const float scale = 1.0f / spp;
 
     //camera (should be in main.ccp)
