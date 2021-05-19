@@ -28,7 +28,7 @@ Scale -1 1 1
 LookAt 31.213000 40.000000 29.000000 27.415477 38.126967 26.340946 -0.306860 0.927184 -0.214866
 Camera "perspective"
 	"float fov" [54.4322231146]
-	#"float screenwindow" [-1.0 1.0 -0.5625 0.5625]
+	"float screenwindow" [-1.0 1.0 -0.5625 0.5625]
 # Camera end
 
 WorldBegin
@@ -44,7 +44,7 @@ WorldBegin
 		"float vdelta" [0.0]
 		"float udelta" [0.0]
 		"string mapping" ["uv"]
-		"string filename" ["../assets/Dandelion Photoscan/Billboard_4K_Albedo.jpg"]
+		"string filename" ["../assets/Billboard_4K_Albedo.png"]
 		"float uscale" [1.0]
 		"bool gamma" ["true"]
 		"float vscale" [1.0]
@@ -53,7 +53,7 @@ WorldBegin
 		"float vdelta" [0.0]
 		"float udelta" [0.0]
 		"string mapping" ["uv"]
-		"string filename" ["../assets/TableUvs.tif"]
+		"string filename" ["../assets/TableUvs.png"]
 		"float uscale" [1.0]
 		"bool gamma" ["true"]
 		"float vscale" [1.0]
@@ -108,6 +108,10 @@ WorldBegin
 	MakeNamedMaterial "PBRTMirrorMaterial1"
 		"rgb Kr" [1.0 1.0 1.0]
 		"string type" ["mirror"]
+
+	MakeNamedMaterial "lambert7"
+		"string type" ["matte"]
+		"rgb Kd" [0.0 1.0 1.0]
 
 	ObjectBegin "|Dandelion"
 		# Maya Geometry : |Dandelion|DandelionShape
@@ -186,9 +190,20 @@ WorldBegin
 		ObjectInstance "|Backwall"
 	AttributeEnd
 
+	ObjectBegin "|pPlane1"
+		# Maya Geometry : |pPlane1|pPlaneShape1
+		NamedMaterial "PBRTMirrorMaterial1"
+		Include "__pPlane1__pPlaneShape1.pbrt"
+	ObjectEnd
+
+	AttributeBegin
+		# Maya Transform : |pPlane1
+		ObjectInstance "|pPlane1"
+	AttributeEnd
+
 	ObjectBegin "|Mirror"
 		# Maya Geometry : |Mirror|MirrorShape
-		NamedMaterial "PBRTMirrorMaterial1"
+		NamedMaterial "lambert7"
 		Include "__Mirror__MirrorShape.pbrt"
 	ObjectEnd
 

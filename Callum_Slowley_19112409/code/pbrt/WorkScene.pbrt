@@ -4,7 +4,7 @@ Film "image"
 	"integer yresolution" [1080]
 	"float scale" [1.0]
 	"float diagonal" [43.2665287723]
-	"integer xresolution" [1090]
+	"integer xresolution" [1920]
 
 Sampler "halton"
 	"integer pixelsamples" [4]
@@ -25,10 +25,10 @@ Accelerator "bvh"
 
 # Camera begin
 Scale -1 1 1
-LookAt 176.252466 190.067912 105.629419 45.428128 64.981460 -14.669726 -0.423663 0.817765 -0.389578
+LookAt 31.213000 40.000000 29.000000 27.415477 38.126967 26.340946 -0.306860 0.927184 -0.214866
 Camera "perspective"
 	"float fov" [54.4322231146]
-	#"float screenwindow" [-1.0 1.0 -0.990825688073 0.990825688073]
+	"float screenwindow" [-1.0 1.0 -0.5625 0.5625]
 # Camera end
 
 WorldBegin
@@ -40,11 +40,29 @@ WorldBegin
 			"rgb L" [1.0 1.0 1.0]
 	AttributeEnd
 
+	Texture "file3" "spectrum" "imagemap"
+		"float vdelta" [0.0]
+		"float udelta" [0.0]
+		"string mapping" ["uv"]
+		"string filename" ["../assets/Billboard_4K_Albedo.png"]
+		"float uscale" [1.0]
+		"bool gamma" ["true"]
+		"float vscale" [1.0]
+
+	Texture "file2" "spectrum" "imagemap"
+		"float vdelta" [0.0]
+		"float udelta" [0.0]
+		"string mapping" ["uv"]
+		"string filename" ["../assets/TableUvs.png"]
+		"float uscale" [1.0]
+		"bool gamma" ["true"]
+		"float vscale" [1.0]
+
 	MakeNamedMaterial "PBRTDisneyMaterial1"
 		"float difftrans" [1.0]
 		"float spectrans" [0.0]
 		"float clearcoatgloss" [1.0]
-		"rgb color" [0.5 0.5 0.5]
+		"texture color" ["file3"]
 		"float sheentint" [0.5]
 		"float speculartint" [0.0]
 		"float roughness" [0.5]
@@ -58,12 +76,23 @@ WorldBegin
 		"string type" ["disney"]
 		"float sheen" [0.0]
 
+	MakeNamedMaterial "PBRTMetalMaterial1"
+		"bool remaproughness" ["true"]
+		"rgb k" [0.5 0.5 0.5]
+		"rgb eta" [0.5 0.5 0.5]
+		"string type" ["metal"]
+		"float roughness" [0.00999999977648]
+
 	MakeNamedMaterial "PBRTGlassMaterial1"
 		"bool remaproughness" ["true"]
 		"rgb Kr" [1.0 1.0 1.0]
 		"string type" ["glass"]
 		"float index" [1.5]
 		"rgb Kt" [1.0 1.0 1.0]
+
+	MakeNamedMaterial "lambert6"
+		"string type" ["matte"]
+		"texture Kd" ["file2"]
 
 	MakeNamedMaterial "PBRTGlassMaterial2"
 		"bool remaproughness" ["true"]
@@ -80,6 +109,10 @@ WorldBegin
 		"rgb Kr" [1.0 1.0 1.0]
 		"string type" ["mirror"]
 
+	MakeNamedMaterial "lambert7"
+		"string type" ["matte"]
+		"rgb Kd" [0.0 1.0 1.0]
+
 	ObjectBegin "|Dandelion"
 		# Maya Geometry : |Dandelion|DandelionShape
 		NamedMaterial "PBRTDisneyMaterial1"
@@ -93,7 +126,7 @@ WorldBegin
 
 	ObjectBegin "|pCube2"
 		# Maya Geometry : |pCube2|pCubeShape2
-		NamedMaterial "Handle"
+		NamedMaterial "PBRTMetalMaterial1"
 		Include "__pCube2__pCubeShape2.pbrt"
 	ObjectEnd
 
@@ -115,7 +148,7 @@ WorldBegin
 
 	ObjectBegin "|pCube1"
 		# Maya Geometry : |pCube1|pCubeShape1
-		NamedMaterial "TableMat"
+		NamedMaterial "lambert6"
 		Include "__pCube1__pCubeShape1.pbrt"
 	ObjectEnd
 
@@ -157,9 +190,20 @@ WorldBegin
 		ObjectInstance "|Backwall"
 	AttributeEnd
 
+	ObjectBegin "|pPlane1"
+		# Maya Geometry : |pPlane1|pPlaneShape1
+		NamedMaterial "PBRTMirrorMaterial1"
+		Include "__pPlane1__pPlaneShape1.pbrt"
+	ObjectEnd
+
+	AttributeBegin
+		# Maya Transform : |pPlane1
+		ObjectInstance "|pPlane1"
+	AttributeEnd
+
 	ObjectBegin "|Mirror"
 		# Maya Geometry : |Mirror|MirrorShape
-		NamedMaterial "PBRTMirrorMaterial1"
+		NamedMaterial "lambert7"
 		Include "__Mirror__MirrorShape.pbrt"
 	ObjectEnd
 
