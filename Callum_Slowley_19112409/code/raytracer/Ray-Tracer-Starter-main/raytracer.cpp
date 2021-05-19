@@ -198,7 +198,7 @@ hittable_list test_scene() {
         world.add(make_shared<triangle>(v0 + transform, v1 + transform, v2 + transform, v0N, v1N, v2N, UVu,UVy, mat_diffuse));
     }
     ////loading mirrorinner  
-     metal_diffuse = make_shared<metal>(Colour(1, 1, 1), 0);
+     metal_diffuse = make_shared<metal>(Colour(.5, .5, .5), 0);
     for (uint32_t i = 0; i < mirrorinner->nfaces(); i++) {
         const Vec3f& v0 = mirrorinner->vert(mirrorinner->face(i)[0]);
         const Vec3f& v1 = mirrorinner->vert(mirrorinner->face(i)[1]);
@@ -325,7 +325,7 @@ int main(int argc, char **argv)
     const int max_depth = 50;
 
     //samples for testing
-    const int spp =1000;
+    const int spp =10;
     const float scale = 1.0f / spp;
 
     //camera (should be in main.ccp)
