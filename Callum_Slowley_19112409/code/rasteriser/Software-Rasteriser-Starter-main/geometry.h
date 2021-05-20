@@ -114,6 +114,8 @@ public:
 // you can declare a vector either that way: Vec3<float> a, or that way: Vec3f a
 typedef Vec3<float> Vec3f;
 typedef Vec3<int> Vec3i;
+typedef Vec3f Point3f;     // 3D point
+typedef Vec3f Colour;     // RGB color
 
 // Implementation of a generic 4x4 Matrix class - Same thing here than with the Vec3 class. It uses
 // a template which is maybe less useful than with vectors but it can be used to

@@ -24,6 +24,7 @@
 SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Surface* screen;
+//names set wrong but still works due to the way where i placed it
 int renderHeight =1920;
 int  renderWidth  = 1080;
 TGAImage image(renderHeight, renderWidth, TGAImage::RGB);
